@@ -1,15 +1,22 @@
-package sk.crud;
+package sk.crud.db;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+
+import sk.crud.sk.crud.Model.FuelModel;
 
 public class FuelRepo {
     
     private DBHelper dbHelper;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public FuelRepo(Context context) {
         dbHelper = new DBHelper(context);
@@ -20,10 +27,12 @@ public class FuelRepo {
         //Open connection to write data
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FuelModel.KEY_ID, fuelModel.id);
+//        values.put(FuelModel.KEY_ID, fuelModel.id);
         values.put(FuelModel.KEY_amount,fuelModel.amount);
         values.put(FuelModel.KEY_km, fuelModel.km);
-        values.put(FuelModel.KEY_date, fuelModel.date.toString());
+
+
+        values.put(FuelModel.KEY_date, sdf.format(fuelModel.date));
 
         // Inserting Row
         long id = db.insert(FuelModel.TABLE, null, values);
@@ -57,6 +66,8 @@ public class FuelRepo {
         //Open connection to read only
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
+        double floatAmount = 0.0;
+
         String selectQuery =  "SELECT  " +
                 FuelModel.KEY_ID + "," +
                 FuelModel.KEY_amount + "," +
@@ -65,27 +76,31 @@ public class FuelRepo {
                 " FROM " + FuelModel.TABLE;
 
         //FuelModel student = new FuelModel();
-        ArrayList<HashMap<String, String>> studentList = new ArrayList<HashMap<String, String>>();
+        ArrayList<HashMap<String, String>> fuelDetailsList = new ArrayList<>();
 
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
 
         if (cursor.moveToFirst()) {
             do {
-                HashMap<String, String> fuelModel = new HashMap<String, String>();
-                fuelModel.put("id", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_ID)));
-                fuelModel.put("name", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_amount)));
-                studentList.add(fuelModel);
+                HashMap<String, String> fuelModelHashMap = new HashMap<>();
+                fuelModelHashMap.put("id", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_ID)));
+
+                floatAmount = cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_amount));
+                fuelModelHashMap.put("amount", Double.toString(floatAmount));
+
+                fuelModelHashMap.put("date", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_date)));
+                fuelDetailsList.add(fuelModelHashMap);
 
             } while (cursor.moveToNext());
         }
 
         cursor.close();
         db.close();
-        return studentList;
+        return fuelDetailsList;
     }
 
-    public FuelModel getFuelDetailsById(int Id){
+    public FuelModel getFuelDetailsById(int Id)  {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String selectQuery =  "SELECT  " +
                 FuelModel.KEY_ID + "," +
@@ -106,7 +121,14 @@ public class FuelRepo {
                 fuelModel.id =cursor.getInt(cursor.getColumnIndex(FuelModel.KEY_ID));
                 fuelModel.amount =cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_amount));
                 fuelModel.km  =cursor.getInt(cursor.getColumnIndex(FuelModel.KEY_km));
-                //fuelModel.date =   cursor.getString(cursor.getColumnIndex(FuelModel.KEY_date));
+                String date =  cursor.getString(cursor.getColumnIndexOrThrow(fuelModel.KEY_date));
+                try {
+                    fuelModel.date.setTime(sdf.parse(date));
+                }
+                catch(ParseException p)
+                {
+
+                }
             } while (cursor.moveToNext());
         }
 

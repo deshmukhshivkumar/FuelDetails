@@ -1,4 +1,5 @@
-package sk.crud;
+package sk.crud.sk.crud.Model;
+import java.util.Calendar;
 import java.util.Date;
 public class FuelModel {
 
@@ -14,6 +15,6 @@ public class FuelModel {
     public int id;
     public float amount;
     public int km;
-    public Date date ;
+    public Calendar date;
 
 }

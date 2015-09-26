@@ -1,13 +1,22 @@
-package sk.crud;
+package sk.crud.controller;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import sk.crud.R;
+import sk.crud.db.FuelRepo;
+import sk.crud.sk.crud.Model.FuelModel;
 
 public class FuelDetails extends AppCompatActivity implements View.OnClickListener {
 
@@ -15,8 +24,8 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
     Button btnClose;
     EditText editTextAmount;
     EditText editTextKm;
-    EditText editTextDate;
-    private int     _Fuel_Details_Id=0;
+    DatePicker editTextDate;
+    private int _Fuel_Details_Id=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +38,27 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
 
         editTextAmount = (EditText) findViewById(R.id.txtEditAmount);
         editTextKm = (EditText) findViewById(R.id.txtEditKmReading);
-        //editTextDate = (EditText) findViewById(R.id.dtpDate);
+        editTextDate = (DatePicker) findViewById(R.id.dtpDate);
 
         btnSave.setOnClickListener(this);
         btnDelete.setOnClickListener(this);
         btnClose.setOnClickListener(this);
+
+        _Fuel_Details_Id = 0;
+        Intent intent= getIntent();
+        _Fuel_Details_Id = intent.getIntExtra("fuel_Id", 0);
+        FuelRepo repo = new FuelRepo(this);
+        FuelModel fuelModel = repo.getFuelDetailsById(_Fuel_Details_Id);
+
+        editTextAmount.setText(String.valueOf(fuelModel.amount));
+        editTextKm.setText(String.valueOf(fuelModel.km));
+
+        if(fuelModel.date != null) {
+            int year = fuelModel.date.get(Calendar.YEAR);
+            int month = fuelModel.date.get(Calendar.MONTH);
+            int day = fuelModel.date.get(Calendar.DAY_OF_MONTH);
+            editTextDate.updateDate(year, month, day);
+        }
     }
 
     @Override
@@ -61,17 +86,30 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
             FuelModel fuelModel = new FuelModel();
             fuelModel.amount= Float.parseFloat(editTextAmount.getText().toString());
             fuelModel.km= Integer.parseInt(editTextKm.getText().toString());
-            //fuelModel.date=editTextName.getText().toString();
-            fuelModel.id=_Fuel_Details_Id;
+
+            int day = editTextDate.getDayOfMonth();
+            int month = editTextDate.getMonth() + 1;
+            int year = editTextDate.getYear();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.clear();
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            fuelModel.date =  calendar;
+
+            fuelModel.id =_Fuel_Details_Id;
 
             if (_Fuel_Details_Id==0){
                 _Fuel_Details_Id = repo.insert(fuelModel);
 
-                Toast.makeText(this, "New Student Insert", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "New Record Inserted", Toast.LENGTH_SHORT).show();
             }else{
 
                 repo.update(fuelModel);
-                Toast.makeText(this,"Student Record updated",Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"Record updated",Toast.LENGTH_SHORT).show();
             }
         }else if (view== findViewById(R.id.btnDelete)){
             FuelRepo repo = new FuelRepo(this);

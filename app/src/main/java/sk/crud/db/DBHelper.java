@@ -1,8 +1,10 @@
-package sk.crud;
+package sk.crud.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import sk.crud.sk.crud.Model.FuelModel;
 
 public class DBHelper extends SQLiteOpenHelper {
     //version number to upgrade database version
@@ -25,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + FuelModel.KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
                 + FuelModel.KEY_amount + " REAL, "
                 + FuelModel.KEY_km + " KM, "
-                + FuelModel.KEY_date + " TEXT )";
+                + FuelModel.KEY_date + " DATETIME )";
 
         db.execSQL(CREATE_TABLE_FUEL);
     }
