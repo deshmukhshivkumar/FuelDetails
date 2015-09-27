@@ -61,8 +61,8 @@ public class MainActivity extends ListActivity implements android.view.View.OnCl
                                 MainActivity.this,
                                 fuelDetailsList,
                                 R.layout.view_fuel_entry,
-                                new String[] { "id","amount","date"},
-                                new int[] {R.id.fuel_Id, R.id.fuel_amount, R.id.fuel_filling_date});
+                                new String[] { "id","amount","fuelAddedDate","quantity" },
+                                new int[] {R.id.fuel_Id, R.id.fuel_amount, R.id.fuel_filling_date, R.id.fuel_quantity});
 
 
                 setListAdapter(adapter);

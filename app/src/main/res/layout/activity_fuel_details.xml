@@ -12,14 +12,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:textAppearanceMedium"
-        android:text="Amount"
-        android:id="@+id/txtAmount"
+        android:text="Quantity(Ltr)"
+        android:id="@+id/txtQuantity"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="30dp"
         />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:text="Amount"
+        android:inputType="number"
+        android:id="@+id/txtAmount"
+        android:layout_below="@+id/txtQuantity"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp"
+        />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +41,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="29dp" />
-
     <DatePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,20 +49,31 @@
         android:id="@+id/dtpDate"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="29dp" />
-
+        android:layout_marginTop="29dp"
+        android:startYear="2015"
+        android:calendarViewShown="false" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="number"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/txtEditQuantity"
+        android:layout_above="@+id/txtEditAmount"
+        android:layout_toRightOf="@+id/txtQuantity"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="false"
+         />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
         android:ems="10"
         android:id="@+id/txtEditAmount"
         android:layout_above="@+id/txtKm"
         android:layout_toRightOf="@+id/txtAmount"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,25 +89,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
+        android:textColor="@android:color/holo_green_dark"
         android:id="@+id/btnSave"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/btnClose" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Close"
         android:id="@+id/btnClose"
+        android:textColor="@android:color/holo_blue_dark"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Delete"
+        android:textColor="@android:color/holo_red_dark"
         android:id="@+id/btnDelete"
         android:layout_alignTop="@+id/btnSave"
         android:layout_toLeftOf="@+id/btnSave" />
-
 </RelativeLayout>

@@ -8,13 +8,14 @@ public class FuelModel {
     // Labels Table Columns names
     public static final String KEY_ID = "id";
     public static final String KEY_amount = "amount";
-    public static final String KEY_km = "km";
-    public static final String KEY_date = "date";
-
+    public static final String KEY_km = "odometerKm";
+    public static final String KEY_date = "fuelAddedDate";
+    public static final String KEY_quantity = "quantityInLiters";
     // property help us to keep data
     public int id;
+    public float quantityInLiters;
     public float amount;
-    public int km;
-    public Calendar date;
+    public int odometerKm;
+    public Calendar fuelAddedDate;
 
 }

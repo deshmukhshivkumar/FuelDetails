@@ -28,12 +28,10 @@ public class FuelRepo {
         //Open connection to write data
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-//        values.put(FuelModel.KEY_ID, fuelModel.id);
         values.put(FuelModel.KEY_amount,fuelModel.amount);
-        values.put(FuelModel.KEY_km, fuelModel.km);
-
-
-        values.put(FuelModel.KEY_date, sdf.format(fuelModel.date));
+        values.put(FuelModel.KEY_quantity, fuelModel.quantityInLiters);
+        values.put(FuelModel.KEY_km, fuelModel.odometerKm);
+        values.put(FuelModel.KEY_date, sdf.format(fuelModel.fuelAddedDate.getTime()));
 
         // Inserting Row
         long id = db.insert(FuelModel.TABLE, null, values);
@@ -55,8 +53,9 @@ public class FuelRepo {
         ContentValues values = new ContentValues();
 
         values.put(FuelModel.KEY_amount,fuelModel.amount);
-        values.put(FuelModel.KEY_km, fuelModel.km);
-        values.put(FuelModel.KEY_date, fuelModel.date.toString());
+        values.put(FuelModel.KEY_km, fuelModel.odometerKm);
+        values.put(FuelModel.KEY_quantity, fuelModel.quantityInLiters);
+        values.put(FuelModel.KEY_date, sdf.format(fuelModel.fuelAddedDate.getTime()));
 
         // It's a good practice to use parameter ?, instead of concatenate string
         db.update(FuelModel.TABLE, values, FuelModel.KEY_ID + "= ?", new String[] { String.valueOf(fuelModel.id) });
@@ -73,7 +72,8 @@ public class FuelRepo {
                 FuelModel.KEY_ID + "," +
                 FuelModel.KEY_amount + "," +
                 FuelModel.KEY_km + "," +
-                FuelModel.KEY_date +
+                FuelModel.KEY_date + ","+
+                FuelModel.KEY_quantity +
                 " FROM " + FuelModel.TABLE;
 
         //FuelModel student = new FuelModel();
@@ -90,7 +90,9 @@ public class FuelRepo {
                 floatAmount = cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_amount));
                 fuelModelHashMap.put("amount", Double.toString(floatAmount));
 
-                fuelModelHashMap.put("date", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_date)));
+                fuelModelHashMap.put("fuelAddedDate", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_date)));
+                fuelModelHashMap.put("quantity", Double.toString(cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_quantity))));
+
                 fuelDetailsList.add(fuelModelHashMap);
 
             } while (cursor.moveToNext());
@@ -107,29 +109,41 @@ public class FuelRepo {
                 FuelModel.KEY_ID + "," +
                 FuelModel.KEY_amount + "," +
                 FuelModel.KEY_km + "," +
+                FuelModel.KEY_quantity + ","+
                 FuelModel.KEY_date +
                 " FROM " + FuelModel.TABLE
                 + " WHERE " +
                 FuelModel.KEY_ID + "=?";// It's a good practice to use parameter ?, instead of concatenate string
 
-        int iCount =0;
         FuelModel fuelModel = new FuelModel();
-
+        Date parsedDate = null;
+        String strDate;
         Cursor cursor = db.rawQuery(selectQuery, new String[] { String.valueOf(Id) } );
 
         if (cursor.moveToFirst()) {
             do {
                 fuelModel.id =cursor.getInt(cursor.getColumnIndex(FuelModel.KEY_ID));
                 fuelModel.amount =cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_amount));
-                fuelModel.km  =cursor.getInt(cursor.getColumnIndex(FuelModel.KEY_km));
-                String date =  cursor.getString(cursor.getColumnIndexOrThrow(fuelModel.KEY_date));
+                fuelModel.quantityInLiters = cursor.getFloat(cursor.getColumnIndex(fuelModel.KEY_quantity));
+                fuelModel.odometerKm =cursor.getInt(cursor.getColumnIndex(FuelModel.KEY_km));
+                strDate =  cursor.getString(cursor.getColumnIndexOrThrow(fuelModel.KEY_date));
                 try {
-                    fuelModel.date.setTime(sdf.parse(date));
+                    parsedDate =  sdf.parse(strDate);
+                    if(parsedDate != null)
+                    {
+                        fuelModel.fuelAddedDate = Calendar.getInstance();
+                        fuelModel.fuelAddedDate.setTimeInMillis(parsedDate.getTime());
+                    }
                 }
                 catch(ParseException p)
                 {
-
+                    p.printStackTrace();
                 }
+                catch (Exception ex)
+                {
+                    ex.printStackTrace();
+                }
+
             } while (cursor.moveToNext());
         }
 

@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import sk.crud.R;
 import sk.crud.db.FuelRepo;
@@ -24,6 +23,7 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
     Button btnClose;
     EditText editTextAmount;
     EditText editTextKm;
+    EditText editTextQuantity;
     DatePicker editTextDate;
     private int _Fuel_Details_Id=0;
 
@@ -39,6 +39,7 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
         editTextAmount = (EditText) findViewById(R.id.txtEditAmount);
         editTextKm = (EditText) findViewById(R.id.txtEditKmReading);
         editTextDate = (DatePicker) findViewById(R.id.dtpDate);
+        editTextQuantity = (EditText) findViewById(R.id.txtEditQuantity);
 
         btnSave.setOnClickListener(this);
         btnDelete.setOnClickListener(this);
@@ -51,12 +52,13 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
         FuelModel fuelModel = repo.getFuelDetailsById(_Fuel_Details_Id);
 
         editTextAmount.setText(String.valueOf(fuelModel.amount));
-        editTextKm.setText(String.valueOf(fuelModel.km));
+        editTextKm.setText(String.valueOf(fuelModel.odometerKm));
+        editTextQuantity.setText(String.valueOf(fuelModel.quantityInLiters));
 
-        if(fuelModel.date != null) {
-            int year = fuelModel.date.get(Calendar.YEAR);
-            int month = fuelModel.date.get(Calendar.MONTH);
-            int day = fuelModel.date.get(Calendar.DAY_OF_MONTH);
+        if(fuelModel.fuelAddedDate != null) {
+            int year = fuelModel.fuelAddedDate.get(Calendar.YEAR);
+            int month = fuelModel.fuelAddedDate.get(Calendar.MONTH);
+            int day = fuelModel.fuelAddedDate.get(Calendar.DAY_OF_MONTH);
             editTextDate.updateDate(year, month, day);
         }
     }
@@ -85,7 +87,8 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
             FuelRepo repo = new FuelRepo(this);
             FuelModel fuelModel = new FuelModel();
             fuelModel.amount= Float.parseFloat(editTextAmount.getText().toString());
-            fuelModel.km= Integer.parseInt(editTextKm.getText().toString());
+            fuelModel.odometerKm = Integer.parseInt(editTextKm.getText().toString());
+            fuelModel.quantityInLiters = Float.parseFloat(editTextQuantity.getText().toString());
 
             int day = editTextDate.getDayOfMonth();
             int month = editTextDate.getMonth() + 1;
@@ -98,7 +101,7 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
             calendar.set(Calendar.DAY_OF_MONTH, day);
 
 //            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            fuelModel.date =  calendar;
+            fuelModel.fuelAddedDate =  calendar;
 
             fuelModel.id =_Fuel_Details_Id;
 
