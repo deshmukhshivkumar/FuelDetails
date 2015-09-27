@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Crud</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_fuel_details">FuelDetails</string>
+    <string name="title_activity_view_fuel_entry">ViewFuelEntry</string>
+</resources>
