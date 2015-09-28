@@ -28,47 +28,11 @@ public class MainActivity extends ListActivity implements android.view.View.OnCl
     public void onClick(View view)
     {
         if (view == findViewById(R.id.btnAdd)){
-
             Intent intent = new Intent(this, FuelDetails.class);
             intent.putExtra("id",0);
             startActivity(intent);
-
         }else {
-
-            FuelRepo repo = new FuelRepo(this);
-
-            ArrayList<HashMap<String, String>> fuelDetailsList =  repo.getFuelList();
-
-            if(fuelDetailsList.size()!=0) {
-
-                ListView listViewFuelDetails = getListView();
-
-                listViewFuelDetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        fuel_Id = (TextView) view.findViewById(R.id.fuel_Id);
-                        String fuelDetailsId = fuel_Id.getText().toString();
-
-                        Intent objIndent = new Intent(getApplicationContext(), FuelDetails.class);
-                        objIndent.putExtra("fuel_Id", Integer.parseInt(fuelDetailsId));
-
-                        startActivity(objIndent);
-                    }
-                });
-
-                ListAdapter adapter =
-                        new SimpleAdapter(
-                                MainActivity.this,
-                                fuelDetailsList,
-                                R.layout.view_fuel_entry,
-                                new String[] { "id","amount","fuelAddedDate","quantity" },
-                                new int[] {R.id.fuel_Id, R.id.fuel_amount, R.id.fuel_filling_date, R.id.fuel_quantity});
-
-
-                setListAdapter(adapter);
-            }else{
-                Toast.makeText(this, "No Record!", Toast.LENGTH_SHORT).show();
-            }
+            populateListView();
         }
     }
 
@@ -78,13 +42,51 @@ public class MainActivity extends ListActivity implements android.view.View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(this);
 
         btnGetAll = (Button) findViewById(R.id.btnGetAll);
         btnGetAll.setOnClickListener(this);
 
+        populateListView();
+    }
+
+    private void populateListView()
+    {
+        FuelRepo repo = new FuelRepo(this);
+
+        ArrayList<HashMap<String, String>> fuelDetailsList =  repo.getFuelList();
+
+        if(fuelDetailsList.size()!=0) {
+
+            ListView listViewFuelDetails = getListView();
+
+            listViewFuelDetails.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    fuel_Id = (TextView) view.findViewById(R.id.fuel_Id);
+                    String fuelDetailsId = fuel_Id.getText().toString();
+
+                    Intent objIndent = new Intent(getApplicationContext(), FuelDetails.class);
+                    objIndent.putExtra("fuel_Id", Integer.parseInt(fuelDetailsId));
+
+                    startActivity(objIndent);
+                }
+            });
+
+            ListAdapter adapter =
+                    new SimpleAdapter(
+                            MainActivity.this,
+                            fuelDetailsList,
+                            R.layout.view_fuel_entry,
+                            new String[]{"id", "amount", "fuelAddedDate", "quantity"},
+                            new int[]{R.id.fuel_Id, R.id.fuel_amount, R.id.fuel_filling_date, R.id.fuel_quantity});
+
+            setListAdapter(adapter);
+        }
+        else{
+            Toast.makeText(this, "No Record!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -48,18 +48,21 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
         _Fuel_Details_Id = 0;
         Intent intent= getIntent();
         _Fuel_Details_Id = intent.getIntExtra("fuel_Id", 0);
+
         FuelRepo repo = new FuelRepo(this);
-        FuelModel fuelModel = repo.getFuelDetailsById(_Fuel_Details_Id);
 
-        editTextAmount.setText(String.valueOf(fuelModel.amount));
-        editTextKm.setText(String.valueOf(fuelModel.odometerKm));
-        editTextQuantity.setText(String.valueOf(fuelModel.quantityInLiters));
+        if(_Fuel_Details_Id != 0) {
+            FuelModel fuelModel = repo.getFuelDetailsById(_Fuel_Details_Id);
+            editTextAmount.setText(String.valueOf(fuelModel.amount));
+            editTextKm.setText(String.valueOf(fuelModel.odometerKm));
+            editTextQuantity.setText(String.valueOf(fuelModel.quantityInLiters));
 
-        if(fuelModel.fuelAddedDate != null) {
-            int year = fuelModel.fuelAddedDate.get(Calendar.YEAR);
-            int month = fuelModel.fuelAddedDate.get(Calendar.MONTH);
-            int day = fuelModel.fuelAddedDate.get(Calendar.DAY_OF_MONTH);
-            editTextDate.updateDate(year, month, day);
+            if (fuelModel.fuelAddedDate != null) {
+                int year = fuelModel.fuelAddedDate.get(Calendar.YEAR);
+                int month = fuelModel.fuelAddedDate.get(Calendar.MONTH);
+                int day = fuelModel.fuelAddedDate.get(Calendar.DAY_OF_MONTH);
+                editTextDate.updateDate(year, month, day);
+            }
         }
     }
 
@@ -114,6 +117,10 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
                 repo.update(fuelModel);
                 Toast.makeText(this,"Record updated",Toast.LENGTH_SHORT).show();
             }
+
+            Intent intent = new Intent(this, ViewFuelEntry.class);
+            startActivity(intent);
+
         }else if (view== findViewById(R.id.btnDelete)){
             FuelRepo repo = new FuelRepo(this);
             repo.delete(_Fuel_Details_Id);
