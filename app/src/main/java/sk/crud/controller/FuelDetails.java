@@ -118,7 +118,7 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
                 Toast.makeText(this,"Record updated",Toast.LENGTH_SHORT).show();
             }
 
-            Intent intent = new Intent(this, ViewFuelEntry.class);
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
         }else if (view== findViewById(R.id.btnDelete)){
