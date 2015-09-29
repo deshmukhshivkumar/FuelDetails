@@ -88,10 +88,10 @@ public class FuelRepo {
                 fuelModelHashMap.put("id", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_ID)));
 
                 floatAmount = cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_amount));
-                fuelModelHashMap.put("amount", Double.toString(floatAmount));
+                fuelModelHashMap.put("amount",String.format("%.2f", floatAmount));
 
                 fuelModelHashMap.put("fuelAddedDate", cursor.getString(cursor.getColumnIndex(FuelModel.KEY_date)));
-                fuelModelHashMap.put("quantity", Double.toString(cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_quantity))));
+                fuelModelHashMap.put("quantity",  String.format("%.2f", cursor.getFloat(cursor.getColumnIndex(FuelModel.KEY_quantity))));
 
                 fuelDetailsList.add(fuelModelHashMap);
 
