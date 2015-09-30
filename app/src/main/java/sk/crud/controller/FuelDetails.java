@@ -27,6 +27,26 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
     DatePicker editTextDate;
     private int _Fuel_Details_Id=0;
 
+
+    private boolean validateInputFields()
+    {
+        boolean isFormValid = true;
+        if(editTextAmount.getText().toString().trim().equals("")){
+            editTextAmount.setError("Please Enter Amount.");
+            isFormValid = false;
+        }
+        if(editTextKm.getText().toString().trim().equals("")){
+            editTextKm.setError("Please Enter Odometer reading.");
+            isFormValid = false;
+        }
+        if(editTextQuantity.getText().toString().trim().equals(""))
+        {
+            editTextQuantity.setError("Please Enter Fuel Quantity.");
+            isFormValid = false;
+        }
+        return isFormValid;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,40 +107,36 @@ public class FuelDetails extends AppCompatActivity implements View.OnClickListen
 
     public void onClick(View view) {
         if (view == findViewById(R.id.btnSave)){
-            FuelRepo repo = new FuelRepo(this);
-            FuelModel fuelModel = new FuelModel();
-            fuelModel.amount= Float.parseFloat(editTextAmount.getText().toString());
-            fuelModel.odometerKm = Integer.parseInt(editTextKm.getText().toString());
-            fuelModel.quantityInLiters = Float.parseFloat(editTextQuantity.getText().toString());
+            if(validateInputFields()) {
+                FuelRepo repo = new FuelRepo(this);
+                FuelModel fuelModel = new FuelModel();
+                fuelModel.amount= Float.parseFloat(editTextAmount.getText().toString());
+                fuelModel.odometerKm = Integer.parseInt(editTextKm.getText().toString());
+                fuelModel.quantityInLiters = Float.parseFloat(editTextQuantity.getText().toString());
 
-            int day = editTextDate.getDayOfMonth();
-            int month = editTextDate.getMonth() + 1;
-            int year = editTextDate.getYear();
+                int day = editTextDate.getDayOfMonth();
+                int month = editTextDate.getMonth() + 1;
+                int year = editTextDate.getYear();
 
-            Calendar calendar = Calendar.getInstance();
-            calendar.clear();
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.DAY_OF_MONTH, day);
+                Calendar calendar = Calendar.getInstance();
+                calendar.clear();
+                calendar.set(Calendar.MONTH, month);
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
 
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            fuelModel.fuelAddedDate =  calendar;
+                fuelModel.fuelAddedDate =  calendar;
+                fuelModel.id =_Fuel_Details_Id;
+                if (_Fuel_Details_Id==0){
+                    _Fuel_Details_Id = repo.insert(fuelModel);
+                    Toast.makeText(this, "New Record Inserted", Toast.LENGTH_SHORT).show();
+                }else{
 
-            fuelModel.id =_Fuel_Details_Id;
-
-            if (_Fuel_Details_Id==0){
-                _Fuel_Details_Id = repo.insert(fuelModel);
-
-                Toast.makeText(this, "New Record Inserted", Toast.LENGTH_SHORT).show();
-            }else{
-
-                repo.update(fuelModel);
-                Toast.makeText(this,"Record updated",Toast.LENGTH_SHORT).show();
+                    repo.update(fuelModel);
+                    Toast.makeText(this,"Record updated",Toast.LENGTH_SHORT).show();
+                }
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             }
-
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-
         }else if (view== findViewById(R.id.btnDelete)){
             FuelRepo repo = new FuelRepo(this);
             repo.delete(_Fuel_Details_Id);
